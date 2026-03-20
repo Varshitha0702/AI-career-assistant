@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Career Assistant</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>🚀 AI Career Assistant</h1>
+
+<!-- Job Description -->
+<div class="card">
+    <h3>🎯 Job Description</h3>
+    <textarea id="jd" placeholder="Paste job description here..."></textarea>
+</div>
+
+<!-- Upload -->
+<div class="card">
+    <h2>📄 Upload Resume</h2>
+    <input type="file" id="resume">
+    <button onclick="upload()">Upload</button>
+</div>
+
+<!-- Analysis -->
+<div class="card">
+    <h3>📊 Analysis</h3>
+    <div id="analysis" class="output-box">No data yet...</div>
+</div>
+
+<!-- Questions -->
+<div class="card">
+    <h3>🎤 Interview Questions</h3>
+    <div id="questions"></div>
+
+    <button onclick="submitAllAnswers()">Submit All Answers</button>
+
+    <div id="result" class="output-box"></div>
+</div>
+
+</div>
+
+<script>
+
+// 🔥 Upload Resume (with JD)
+function upload() {
+
+    let start = Date.now();
+
+    let file = document.getElementById("resume").files[0];
+    let jd = document.getElementById("jd").value;
+
+    if (!jd.trim()) {
+        alert("Please enter Job Description first!");
+        return;
+    }
+
+    if (!file) {
+        alert("Please upload a resume!");
+        return;
+    }
+
+    let formData = new FormData();
+    formData.append("resume", file);
+    formData.append("jd", jd);
+
+    document.getElementById("analysis").innerHTML = "⏳ Analyzing...";
+    document.getElementById("questions").innerHTML = "";
+    document.getElementById("result").innerHTML = "";
+
+    fetch("/upload", {
+        method: "POST",
+        body: formData
+    })
+    .then(res => {
+        if (!res.ok) throw new Error("Server error");
+        return res.json();
+    })
+    .then(data => {
+
+        let end = Date.now();
+        console.log("Processing Time:", (end - start), "ms");
+
+        let a = data.analysis;
+        let percent = a.score || 0;
+
+        // ✅ Analysis UI
+        document.getElementById("analysis").innerHTML = `
+        <div class="score">Score: ${percent}%</div>
+
+        <div class="progress">
+            <div class="progress-bar" style="width:${percent}%"></div>
+        </div>
+
+        <p><b>AI Analysis:</b> Hybrid scoring using semantic similarity + skill matching</p>
+        <p><b>Semantic Match:</b> ${a.semantic_score || 0}%</p>
+        <p><b>Resume Skills:</b> ${(a.resume_skills || []).join(", ")}</p>
+        <p><b>Matched Skills:</b> ${(a.matched_skills || []).join(", ")}</p>
+        <p><b>Missing Skills:</b> ${(a.missing_skills || []).join(", ")}</p>
+        <p><b>Recommended Skills:</b> ${(a.recommendations || []).join(", ")}</p>
+        `;
+
+        // 🎤 Questions UI
+        let qDiv = document.getElementById("questions");
+        qDiv.innerHTML = "";
+
+        data.questions.forEach((q, index) => {
+
+            let div = document.createElement("div");
+            div.style.marginBottom = "15px";
+
+            let label = document.createElement("p");
+            label.innerText = q;
+
+            let input = document.createElement("input");
+            input.placeholder = "Type your answer...";
+            input.id = "answer_" + index;
+
+            div.appendChild(label);
+            div.appendChild(input);
+
+            qDiv.appendChild(div);
+        });
+
+    })
+    .catch(err => {
+        document.getElementById("analysis").innerHTML = "❌ Error analyzing resume";
+        console.error(err);
+    });
+}
+
+
+// 🎤 Submit All Answers
+function submitAllAnswers() {
+
+    let qDiv = document.getElementById("questions");
+    let inputs = qDiv.querySelectorAll("input");
+
+    if (inputs.length === 0) {
+        alert("No questions available!");
+        return;
+    }
+
+    document.getElementById("result").innerHTML = "⏳ Evaluating...";
+
+    let resultsHTML = "";
+
+    inputs.forEach((input, index) => {
+
+        let answer = input.value;
+        let question = input.parentElement.querySelector("p").innerText;
+
+        if (!answer.trim()) {
+            resultsHTML += `<p><b>Q${index+1}:</b> No answer provided</p>`;
+            document.getElementById("result").innerHTML = resultsHTML;
+            return;
+        }
+
+        fetch("/evaluate", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({
+                answer: answer,
+                question: question
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+
+            resultsHTML += `
+            <p>
+            <b>Q${index+1} Score:</b> ${data.score}<br>
+            <b>Feedback:</b> ${data.feedback}
+            </p>
+            `;
+
+            document.getElementById("result").innerHTML = resultsHTML;
+        });
+
+    });
+}
+
+</script>
+
+</body>
+</html>

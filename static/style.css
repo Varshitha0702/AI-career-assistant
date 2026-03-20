@@ -1,0 +1,124 @@
+/* 🔥 Base */
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #0f172a, #020617);
+    color: #e2e8f0;
+}
+
+/* Container */
+.container {
+    max-width: 950px;
+    margin: auto;
+    padding: 30px 20px;
+}
+
+/* Title */
+h1 {
+    text-align: center;
+    font-size: 2.5rem;
+    color: #38bdf8;
+    margin-bottom: 30px;
+}
+
+/* 🔥 Card */
+.card {
+    background: rgba(30, 41, 59, 0.5);
+    backdrop-filter: blur(12px);
+    border-radius: 14px;
+    padding: 20px;
+    margin-bottom: 20px;
+    border: 1px solid rgba(56, 189, 248, 0.2);
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 30px rgba(56, 189, 248, 0.25);
+}
+
+/* Headings */
+h2, h3 {
+    color: #38bdf8;
+}
+
+/* Inputs */
+input, textarea {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: none;
+    background: #020617;
+    color: white;
+    border: 1px solid #334155;
+    margin-top: 10px;
+}
+
+/* Button */
+button {
+    margin-top: 10px;
+    padding: 10px 15px;
+    border-radius: 8px;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    background: linear-gradient(135deg, #38bdf8, #0ea5e9);
+    color: black;
+    transition: all 0.3s ease;
+}
+
+button:hover {
+    transform: scale(1.05);
+    background: linear-gradient(135deg, #0ea5e9, #0284c7);
+}
+
+/* Questions */
+#questions button {
+    width: 100%;
+    text-align: left;
+    background: #1e293b;
+    color: #38bdf8;
+    border: 1px solid #334155;
+}
+
+#questions button:hover {
+    background: #334155;
+}
+
+/* Output Box */
+.output-box {
+    margin-top: 10px;
+    padding: 12px;
+    border-radius: 10px;
+    background: #020617;
+    border: 1px solid #334155;
+}
+
+/* Score */
+.score {
+    font-size: 1.6rem;
+    font-weight: bold;
+    color: #22c55e;
+}
+
+/* Feedback */
+.feedback {
+    margin-top: 5px;
+    color: #facc15;
+}
+
+/* 🔥 Progress Bar */
+.progress {
+    margin-top: 10px;
+    height: 10px;
+    border-radius: 10px;
+    background: #1e293b;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #22c55e, #4ade80);
+    width: 0%;
+    transition: width 0.5s ease;
+}
